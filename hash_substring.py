@@ -1,29 +1,44 @@
-# python3
+#python3
 
-def read_input():
-    # this function needs to acquire input both from keyboard and file
-    # as before, use capital i (input from keyboard) and capital f (input from file) to choose which input type will follow
-    input_type = input().rstrip().upper()
+class RabinKarp:
+    def __init__(self, pattern, text):
+        self.pattern = pattern
+        self.text = text
+        self.prime = 101
+        self.multiplier = 256
+        self.bucket_count = len(text) - len(pattern) + 1
+        self.buckets = [[] for _ in range(self.bucket_count)]
 
-    if input_type == 'I':
-        # Read input from keyboard
-        pattern = input().rstrip()
-        text = input().rstrip()
-    elif input_type == 'F':
-        # Read input from file
-        with open('test_sample.txt', 'r') as file:
-            pattern = file.readline().rstrip()
-            text = file.readline().rstrip()
+    def _hash_func(self, s):
+        # Hash function
+        ans = 0
+        for c in reversed(s):
+            ans = (ans * self.multiplier + ord(c)) % self.prime
+        return ans % self.bucket_count
 
-    # Return both lines as a tuple
-    return pattern, text
+    def add(self, string):
+        hashed = self._hash_func(string)
+        bucket = self.buckets[hashed]
+        if string not in bucket:
+            self.buckets[hashed].append(string)
 
-def print_occurrences(output):
-    # this function should control output, it doesn't need any return
-    print(' '.join(map(str, output)))
+    def delete(self, string):
+        hashed = self._hash_func(string)
+        bucket = self.buckets[hashed]
+        for i in range(len(bucket)):
+            if bucket[i] == string:
+                bucket.pop(i)
+                break
 
-def get_occurrences(pattern, text):
-    # this function should find the occurrences using Rabin-Karp algorithm 
+    def find(self, string):
+        hashed = self._hash_func(string)
+        if string in self.buckets[hashed]:
+            return "yes"
+        else:
+            return "no"
+
+
+def rabin_karp(pattern, text):
     occurrences = []
     p_len = len(pattern)
     t_len = len(text)
@@ -34,16 +49,27 @@ def get_occurrences(pattern, text):
         if p_hash == t_hash:
             if pattern == text[i:i + p_len]:
                 occurrences.append(i)
-        
-        if i < t_len - p_len:
-            t_hash = hash(text[i + 1:i + p_len + 1])        
 
-    # Return an iterable variable
+        if i < t_len - p_len:
+            t_hash = hash(text[i + 1:i + p_len + 1])
+
     return occurrences
 
-# This part launches the functions
+
 if __name__ == '__main__':
-    print_occurrences(get_occurrences(*read_input()))
+    input_type = input().rstrip().upper()
+
+    if input_type == 'I':
+        pattern = input().rstrip()
+        text = input().rstrip()
+    elif input_type == 'F':
+        with open('test_sample.txt', 'r') as file:
+            pattern = file.readline().rstrip()
+            text = file.readline().rstrip()
+
+    occurrences = rabin_karp(pattern, text)
+    print_occurrences(occurrences)
+
 
 
 
