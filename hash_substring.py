@@ -45,3 +45,4 @@ def get_occurrences(pattern, text):
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
 
+
