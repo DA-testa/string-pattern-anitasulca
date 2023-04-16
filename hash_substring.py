@@ -25,10 +25,11 @@ def print_occurrences(output):
 
 
 def get_occurrences(pattern, text):
-    # this function should find the occurrences using Rabin-Karp algorithm 
+    # this function should find the occurrences using Rabin-Karp algorithm
     occurrences = []
     p_len = len(pattern)
     t_len = len(text)
+    prime = 101  # a prime number for hashing
 
     # Compute hash of the pattern and the initial hash of the first window in the text
     p_hash = sum(ord(c) for c in pattern)
@@ -42,7 +43,7 @@ def get_occurrences(pattern, text):
 
         if i < t_len - p_len:  # Update the hash for the next window
             t_hash = t_hash - ord(text[i]) + ord(text[i + p_len])
-
+            
     # Return an iterable variable
     return occurrences
 
@@ -50,6 +51,7 @@ def get_occurrences(pattern, text):
 # This part launches the functions
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
+
 
 
 
