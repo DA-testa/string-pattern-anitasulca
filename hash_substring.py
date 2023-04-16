@@ -27,16 +27,8 @@ def get_occurrences(pattern, text):
     occurrences = []
     p_len = len(pattern)
     t_len = len(text)
-
-    # Compute the hash value of the pattern and the first substring of text
-    p_hash = sum(ord(pattern[i]) for i in range(p_len)) % (2**64)
-    t_hash = sum(ord(text[i]) for i in range(p_len)) % (2**64)
-
-    # Precompute the power of prime for rolling hash
-    prime = 101
-    prime_power = 1
-    for _ in range(p_len):
-        prime_power = (prime_power * prime) % (2**64)
+    p_hash = hash(pattern)
+    t_hash = hash(text[:p_len])
 
     for i in range(t_len - p_len + 1):
         if p_hash == t_hash:
@@ -44,11 +36,7 @@ def get_occurrences(pattern, text):
                 occurrences.append(i)
         
         if i < t_len - p_len:
-            # Update the rolling hash value for the next substring
-            t_hash = (t_hash - ord(text[i])) % (2**64)
-            t_hash = (t_hash * prime + ord(text[i + p_len])) % (2**64)
-            if t_hash < 0:
-                t_hash += 2**64
+            t_hash = hash(text[i + 1:i + p_len + 1])        
 
     # Return an iterable variable
     return occurrences
@@ -56,3 +44,4 @@ def get_occurrences(pattern, text):
 # This part launches the functions
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
+
