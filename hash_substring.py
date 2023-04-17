@@ -9,7 +9,6 @@ def read_input():
         pattern = input().rstrip()
         text = input().rstrip()
     elif input_type == 'F':
-        filename = input().rstrip()
         with open('./tests/06', 'r') as f:
             pattern = f.readline().rstrip()
             text = f.readline().rstrip()
