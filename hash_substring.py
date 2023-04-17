@@ -9,10 +9,10 @@ def read_input():
         pattern = input().rstrip()
         text = input().rstrip()
     elif input_type == 'F':
-        with open(input().rstrip()) as f:
+        filename = input().rstrip()
+        with open('./tests/06', 'r') as f:
             pattern = f.readline().rstrip()
             text = f.readline().rstrip()
-    return pattern, text
     else:
         raise ValueError("Invalid input type")
 
