@@ -3,51 +3,64 @@
 def read_input():
     # this function needs to acquire input both from keyboard and file
     # as before, use capital i (input from keyboard) and capital f (input from file) to choose which input type will follow
-    input_type = input().rstrip().upper()
 
+    input_type = input().rstrip()
     if input_type == 'I':
-        # Read input from keyboard
         pattern = input().rstrip()
         text = input().rstrip()
     elif input_type == 'F':
-        # Read input from file
-        with open('./tests/06', 'r') as file:
-            pattern = file.readline().rstrip()
-            text = file.readline().rstrip()
-
-    # Return both lines as a tuple
+        with open(input().rstrip()) as f:
+            pattern = f.readline().rstrip()
+            text = f.readline().rstrip()
     return pattern, text
+    else:
+        raise ValueError("Invalid input type")
+
+    return pattern, text
+
 
 def print_occurrences(output):
     # this function should control output, it doesn't need any return
     print(' '.join(map(str, output)))
 
+
 def get_occurrences(pattern, text):
-     
-    occurrences = []
-    p_len = len(pattern)
-    t_len = len(text)
-    p_hash = hash(pattern)
-    t_hash = hash(text[:p_len])
+    # this function should find the occurrences using Rabin Karp algorithm
 
-    p_pow = pow(31, p_len - 1)  
+    p = 1000000007  # prime number
+    b = 263  # base
 
-    for i in range(t_len - p_len + 1):
-        if p_hash == t_hash:
-            if pattern == text[i:i + p_len]:
-                occurrences.append(i)
-        
-        if i < t_len - p_len:
-           
-            t_hash = (t_hash - ord(text[i])) // 31 
-            t_hash += ord(text[i + p_len]) * p_pow  
+    n = len(text)
+    m = len(pattern)
 
-    # Return an iterable variable
-    return occurrences
+    # calculate b^(m-1) mod p
+    b_pow_m_minus_1 = pow(b, m-1, p)
 
-# This part launches the functions
+    # calculate the hash value of the pattern
+    pattern_hash = sum(ord(pattern[i]) * pow(b, m-i-1, p) for i in range(m)) % p
+
+    # calculate the hash value of the first substring of length m
+    text_hash = sum(ord(text[i]) * pow(b, m-i-1, p) for i in range(m)) % p
+
+    occurrences = set()
+
+    if pattern_hash == text_hash and pattern == text[:m]:
+        occurrences.add(0)
+
+    for i in range(1, n-m+1):
+        # update the rolling hash function
+        text_hash = (text_hash - ord(text[i-1]) * b_pow_m_minus_1) % p
+        text_hash = (text_hash * b + ord(text[i+m-1])) % p
+
+        if pattern_hash == text_hash and pattern == text[i:i+m]:
+            occurrences.add(i)
+
+    return sorted(occurrences)
+
+
+# this part launches the functions
 if __name__ == '__main__':
-    print_occurrences(get_occurrences(*read_input()))
+    print_occurrences(get_occurrences(*read_input())
 
 
 
