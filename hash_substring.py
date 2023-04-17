@@ -9,7 +9,7 @@ def read_input():
         pattern = input().rstrip()
         text = input().rstrip()
     elif input_type == 'F':
-        with open('./tests/06', 'r') as f:
+        with open(input().rstrip()) as f:
             pattern = f.readline().rstrip()
             text = f.readline().rstrip()
     else:
@@ -26,19 +26,19 @@ def print_occurrences(output):
 def get_occurrences(pattern, text):
     # this function should find the occurrences using Rabin Karp algorithm
 
-    p = 1000000007  # prime number
-    b = 263  # base
+    p = 1000000007  
+    b = 263  
 
     n = len(text)
     m = len(pattern)
 
-    # calculate b^(m-1) mod p
+    
     b_pow_m_minus_1 = pow(b, m-1, p)
 
-    # calculate the hash value of the pattern
+   
     pattern_hash = sum(ord(pattern[i]) * pow(b, m-i-1, p) for i in range(m)) % p
 
-    # calculate the hash value of the first substring of length m
+    
     text_hash = sum(ord(text[i]) * pow(b, m-i-1, p) for i in range(m)) % p
 
     occurrences = set()
@@ -47,7 +47,7 @@ def get_occurrences(pattern, text):
         occurrences.add(0)
 
     for i in range(1, n-m+1):
-        # update the rolling hash function
+        
         text_hash = (text_hash - ord(text[i-1]) * b_pow_m_minus_1) % p
         text_hash = (text_hash * b + ord(text[i+m-1])) % p
 
@@ -57,9 +57,10 @@ def get_occurrences(pattern, text):
     return sorted(occurrences)
 
 
-# this part launches the functions
+
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
+
 
 
 
